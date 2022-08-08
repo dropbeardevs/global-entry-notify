@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "727287158173",
+    "project_id": "global-entry-c8373",
+    "storage_bucket": "global-entry-c8373.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727287158173:android:e4aceb46a434f29e1ccb74",
+        "android_client_info": {
+          "package_name": "com.dropbeardevs.globalentrynotify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "727287158173-6h8isufhavoeoe9j9bhck6q6pgkabnvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG8nYrM-xxnkMt0eIII5AgNG7Qfeh989E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727287158173-6h8isufhavoeoe9j9bhck6q6pgkabnvj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "727287158173-6nn4k7lcpr3vm12tb78gnod0i5us7eh4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dropbeardevs.globalEntryNotify"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
