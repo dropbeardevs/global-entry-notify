@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 import '../common/constants.dart' as constants;
 
 class HomePage extends StatefulWidget {
@@ -11,10 +11,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   _HomePageState() {
-    _getId();
+    //_getId();
   }
 
-  String? _token = "";
+  // String? _token = "";
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +50,14 @@ class _HomePageState extends State<HomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(_token.toString()),
+            Text(),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _getId() async {
-    _token = await FirebaseMessaging.instance.getToken();
-  }
+  // Future<void> _getId() async {
+  //   _token = await FirebaseMessaging.instance.getToken();
+  // }
 }
