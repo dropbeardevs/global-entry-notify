@@ -25,6 +25,7 @@ class GlobalEntryNotify extends StatelessWidget {
     return MaterialApp(
       title: constants.appTitle,
       theme: ThemeData.light(),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: Routes.routes,
     );

@@ -28,6 +28,12 @@
             "deviceId": "00008030-001955801128802E"
         },
         {
+            "name": "Homer's Android",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "ZY226SWBTV"
+        },
+        {
             "name": "Flutter for web",
             "type": "dart",
             "request": "launch",
