@@ -10,16 +10,16 @@
             "type": "dart"
         },
         {
-            "name": "Android",
+            "name": "Android Emulator",
             "request": "launch",
             "type": "dart",
             "deviceId": "emulator-5554"
         },
         {
-            "name": "iPhone",
+            "name": "iPhone Emulator",
             "request": "launch",
             "type": "dart",
-            "deviceId": "E839B92E-485D-4D67-AD1C-FEB88C66BFBE"
+            "deviceId": "5A78C772-3889-4634-8F3A-8CA4B3D8C87D"
         },
         {
             "name": "Homer's iPhone",
