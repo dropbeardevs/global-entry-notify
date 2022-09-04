@@ -1,32 +1,43 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../firebase_options.dart';
 
 class FirebaseMsg {
+  late final FirebaseMessaging _messaging;
+  late String? _token;
+
+
   FirebaseMsg() {
     _initFirebaseMsg();
   }
 
   Future<void> _initFirebaseMsg() async {
+
+    _messaging = FirebaseMessaging.instance;
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    await _setForegroundMessaging();
-    await _setupInteractedMessage();
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
-
-
-      // For handling notification when the app is in background
-    // but not terminated
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      PushNotification notification = PushNotification(
-        title: message.notification?.title,
-        body: message.notification?.body,
-        trustedTravelerUrl: message.data['TrustedTravelerUrl'],
-      );
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      await _setForegroundMessaging();
+      await _setupInteractedMessage();
+    }
   }
 
+  // Set up foreground notifications for iOS
   Future<void> _setForegroundMessaging() async {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -34,6 +45,44 @@ class FirebaseMsg {
       badge: true,
       sound: true,
     );
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description: 'This channel is used for important notifications.',
+      importance: Importance.max,
+    );
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+
+      // If `onMessage` is triggered with a notification, construct our own
+      // local notification to show to users using the created channel.
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                icon: android?.smallIcon,
+                // other properties...
+              ),
+            ));
+      }
+    });
   }
 
 // It is assumed that all messages contain a data field with the key 'type'
@@ -51,6 +100,9 @@ class FirebaseMsg {
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
+    // For handling notification when the app is in background
+    // but not terminated
+
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
   }
 
@@ -58,70 +110,20 @@ class FirebaseMsg {
     if (message.data['type'] == 'chat') {}
   }
 
-  void registerNotification() async {
-    // 1. Initialize the Firebase app
-    await Firebase.initializeApp();
+Future<void> _setupToken() async {
 
-    // 2. Instantiate Firebase Messaging
-    _messaging = FirebaseMessaging.instance;
+_token = await FirebaseMessaging.instance.getToken();
 
-    // 3. On iOS, this helps to take the user permissions
-    NotificationSettings settings = await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      provisional: false,
-      sound: true,
-    );
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
+await _sendTokenToApi(_token!);
 
-      // For handling the received notifications
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        // Parse the message received
-        PushNotification notification = PushNotification(
-          title: message.notification?.title,
-          body: message.notification?.body,
-          trustedTravelerUrl: message.data['TrustedTravelerUrl'],
-        );
+FirebaseMessaging.instance.onTokenRefresh.listen(_sendTokenToApi);
 
-        setState(() {
-          _notificationInfo = notification;
-          _totalNotifications++;
-        });
-
-        if (_notificationInfo != null) {
-          // TODO: Display notification
-
-        }
-      });
-    } else {
-      print('User declined or has not accepted permission');
-    }
-
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
-
-  // For handling notification when the app is in terminated state
-  checkForInitialMessage() async {
-    await Firebase.initializeApp();
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-
-    if (initialMessage != null) {
-      PushNotification notification = PushNotification(
-        title: initialMessage.notification?.title,
-        body: initialMessage.notification?.body,
-        trustedTravelerUrl: initialMessage.data['TrustedTravelerUrl'],
-      );
-      setState(() {
-        _notificationInfo = notification;
-        _totalNotifications++;
-      });
-    }
-  }
 }
 
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
+   Future<void> _sendTokenToApi(String token) async
+{
+
+
 }
