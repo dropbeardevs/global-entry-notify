@@ -100,7 +100,7 @@ class FirebaseMsg {
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
-    // For handling notification when the app is in background
+    // For handling notification when the app is in backgroundh
     // but not terminated
 
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
